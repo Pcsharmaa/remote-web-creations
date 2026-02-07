@@ -7,6 +7,7 @@ import Process from "@/components/Process";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
+import TheMindsBehind from "@/components/TheMindsBehind";
 
 const Index = () => {
   return (
@@ -19,6 +20,7 @@ const Index = () => {
         <TechStack />
         <Process />
         <WhyChooseUs />
+        <TheMindsBehind />
         <CTA />
       </main>
       <Footer />
