@@ -1,12 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import SectionHeading from "@/components/SectionHeading";
-import { Calendar, ArrowRight, X, Clock, Tag, User, Share2, Bookmark, Heart } from "lucide-react";
+import { Calendar, ArrowRight, Clock, Heart, Bookmark } from "lucide-react";
 import BlogPopup from "@/components/BlogPopup";
 
-// Enhanced post data with images and detailed content
+// ✅ For Vite - Dynamically import ALL images from folders
+const blogImages = import.meta.glob('@/assets/blog/*.{jpg,jpeg,png,webp,svg}', { eager: true });
+const herbImages = import.meta.glob('@/assets/herbs/*.{jpg,jpeg,png,webp,svg}', { eager: true });
+
+// Helper function to get image by filename
+const getImage = (filename, imageMap) => {
+  if (!filename) return null;
+  const key = Object.keys(imageMap).find(key => key.includes(filename));
+  return key ? imageMap[key].default : null;
+};
+
+// Blog posts data - just use filenames
 const posts = [
   {
     id: 1,
@@ -18,23 +27,13 @@ const posts = [
     readTime: "5 min read",
     author: "Dr. Priya Sharma",
     authorTitle: "Senior Ayurvedic Physician",
-    image: "https://placehold.co/1200x800?text=Blog+Image",
-    herbImage: "https://placehold.co/600x600?text=Herb+Image",
+    image: "panchakarma.png", // ✅ Just the filename
+    herbImage: "triphala.png", // ✅ Just the filename
     herbName: "Triphala",
     herbUses: ["Digestive health", "Detoxification", "Immune support"],
     content: `
-      <p>Panchakarma is the cornerstone of Ayurvedic healing, offering profound benefits for physical and mental well-being. This comprehensive detoxification therapy removes deep-seated toxins (ama) from the body while restoring balance to the doshas.</p>
-      
-      <h3>Key Benefits:</h3>
-      <ul>
-        <li><strong>Deep Detoxification:</strong> Removes accumulated toxins from tissues and cells</li>
-        <li><strong>Immune System Boost:</strong> Strengthens natural defense mechanisms</li>
-        <li><strong>Stress Reduction:</strong> Calms the nervous system and improves mental clarity</li>
-        <li><strong>Metabolic Enhancement:</strong> Improves digestion and nutrient absorption</li>
-        <li><strong>Rejuvenation:</strong> Promotes cellular regeneration and vitality</li>
-      </ul>
-      
-      <p>The treatment involves five main procedures: Vamana (therapeutic vomiting), Virechana (purgation), Basti (enema), Nasya (nasal administration), and Raktamokshana (bloodletting), each tailored to individual constitution.</p>
+      <p>Panchakarma is the cornerstone of Ayurvedic healing...</p>
+      <!-- Your content here -->
     `,
     tags: ["Panchakarma", "Detox", "Ayurveda", "Wellness"]
   },
@@ -48,21 +47,12 @@ const posts = [
     readTime: "4 min read",
     author: "Dr. Rajesh Kumar",
     authorTitle: "Ayurvedic Lifestyle Expert",
-      image: "https://placehold.co/1200x800?text=Blog+Image",
-    herbImage: "https://placehold.co/600x600?text=Herb+Image",
+    image: "winter-health.png",
+    herbImage: "tulsi.png",
     herbName: "Tulsi (Holy Basil)",
     herbUses: ["Respiratory health", "Immune support", "Stress relief"],
     content: `
-      <p>Winter is the season of Kapha dosha, characterized by cold, damp, and heavy qualities. To maintain health during this time, Ayurveda recommends specific dietary and lifestyle practices.</p>
-      
-      <h3>Essential Winter Tips:</h3>
-      <ul>
-        <li><strong>Warming Foods:</strong> Include ginger, garlic, cinnamon, and black pepper in your meals</li>
-        <li><strong>Herbal Teas:</strong> Drink tulsi, ginger, or licorice tea to boost immunity</li>
-        <li><strong>Oil Massage:</strong> Apply warm sesame oil before bathing to nourish the skin</li>
-        <li><strong>Regular Exercise:</strong> Maintain physical activity to keep circulation flowing</li>
-        <li><strong>Hydration:</strong> Drink warm water throughout the day</li>
-      </ul>
+      <p>Winter is the season of Kapha dosha...</p>
     `,
     tags: ["Winter Health", "Seasonal", "Immunity", "Kapha"]
   },
@@ -76,26 +66,12 @@ const posts = [
     readTime: "6 min read",
     author: "Dr. Anjali Mehta",
     authorTitle: "Digestive Health Specialist",
-    image: "https://placehold.co/1200x800?text=Blog+Image",
-    herbImage: "https://placehold.co/600x600?text=Herb+Image",
+    image: "digestion.png",
+    herbImage: "ginger.png",
     herbName: "Ginger",
     herbUses: ["Digestion", "Nausea relief", "Anti-inflammatory"],
     content: `
-      <p>Ayurveda emphasizes the importance of a strong digestive fire (Agni) for overall health. Here are 10 powerful home remedies to enhance your digestion naturally.</p>
-      
-      <h3>Top 10 Remedies:</h3>
-      <ol>
-        <li><strong>Ginger Tea:</strong> Fresh ginger with honey before meals</li>
-        <li><strong>Cumin Water:</strong> Cumin seeds soaked overnight</li>
-        <li><strong>Fennel Seeds:</strong> Chew after meals</li>
-        <li><strong>Triphala:</strong> Take before bed</li>
-        <li><strong>Warm Lemon Water:</strong> Start your morning with this</li>
-        <li><strong>Apple Cider Vinegar:</strong> Dilute in water</li>
-        <li><strong>Pomegranate Juice:</strong> Soothes the digestive tract</li>
-        <li><strong>Fenugreek Seeds:</strong> Soak and consume</li>
-        <li><strong>Asafoetida (Hing):</strong> Add to foods</li>
-        <li><strong>Yogurt:</strong> With black salt and roasted cumin</li>
-      </ol>
+      <p>Ayurveda emphasizes the importance of a strong digestive fire...</p>
     `,
     tags: ["Digestion", "Home Remedies", "Ayurveda", "Health Tips"]
   },
@@ -109,21 +85,12 @@ const posts = [
     readTime: "7 min read",
     author: "Dr. Vikram Singh",
     authorTitle: "Constitutional Medicine Expert",
-    image: "https://placehold.co/1200x800?text=Blog+Image",
-    herbImage: "https://placehold.co/600x600?text=Herb+Image",
+    image: "doshas.png",
+    herbImage: "ashwagandha.png",
     herbName: "Ashwagandha",
     herbUses: ["Stress relief", "Vitality", "Sleep support"],
     content: `
-      <p>Ayurveda recognizes three primary life forces or doshas: Vata (space and air), Pitta (fire and water), and Kapha (earth and water). Understanding your dominant dosha is key to optimal health.</p>
-      
-      <h3>Identifying Your Dosha:</h3>
-      <ul>
-        <li><strong>Vata:</strong> Creative, energetic, adaptable - when balanced; anxious, scattered, cold when imbalanced</li>
-        <li><strong>Pitta:</strong> Intelligent, focused, courageous - when balanced; irritable, judgmental, overheated when imbalanced</li>
-        <li><strong>Kapha:</strong> Calm, loving, strong - when balanced; sluggish, greedy, stagnant when imbalanced</li>
-      </ul>
-      
-      <p>Each dosha requires specific dietary and lifestyle recommendations to maintain balance and promote well-being.</p>
+      <p>Ayurveda recognizes three primary life forces or doshas...</p>
     `,
     tags: ["Doshas", "Ayurveda Basics", "Constitution", "Wellness"]
   },
@@ -137,21 +104,12 @@ const posts = [
     readTime: "5 min read",
     author: "Dr. Meera Patel",
     authorTitle: "Mental Health & Wellness Expert",
-    image: "https://placehold.co/1200x800?text=Blog+Image",
-    herbImage: "https://placehold.co/600x600?text=Herb+Image",
+    image: "stress-relief.png",
+    herbImage: "brahmi.png",
     herbName: "Brahmi",
     herbUses: ["Cognitive function", "Stress reduction", "Anxiety relief"],
     content: `
-      <p>Modern life brings unprecedented levels of stress, but Ayurveda offers time-tested solutions for mental well-being and stress management.</p>
-      
-      <h3>Effective Stress Relief Techniques:</h3>
-      <ul>
-        <li><strong>Shirodhara:</strong> Warm oil poured on the forehead - deeply calming</li>
-        <li><strong>Abhyanga:</strong> Daily self-massage with warm oil</li>
-        <li><strong>Meditation:</strong> 15-20 minutes of daily practice</li>
-        <li><strong>Herbal Supplements:</strong> Ashwagandha, Brahmi, and Jatamansi</li>
-        <li><strong>Yoga:</strong> Gentle asanas and pranayama</li>
-      </ul>
+      <p>Modern life brings unprecedented levels of stress...</p>
     `,
     tags: ["Stress Relief", "Mental Health", "Meditation", "Wellness"]
   },
@@ -165,23 +123,12 @@ const posts = [
     readTime: "4 min read",
     author: "Dr. Suresh Reddy",
     authorTitle: "Herbal Medicine Expert",
-    image: "https://placehold.co/1200x800?text=Blog+Image",
-    herbImage: "https://placehold.co/600x600?text=Herb+Image",
+    image: "turmeric-herb.png",
+    herbImage: "turmeric.png",
     herbName: "Turmeric (Curcuma)",
     herbUses: ["Anti-inflammatory", "Antioxidant", "Joint health"],
     content: `
-      <p>Turmeric (Curcuma longa) has been revered in Ayurveda for thousands of years as a powerful healing herb. Its active compound, curcumin, offers remarkable health benefits.</p>
-      
-      <h3>Health Benefits of Turmeric:</h3>
-      <ul>
-        <li><strong>Anti-inflammatory:</strong> Effective for arthritis and joint pain</li>
-        <li><strong>Antioxidant:</strong> Protects cells from free radical damage</li>
-        <li><strong>Digestive Health:</strong> Supports healthy digestion and gut health</li>
-        <li><strong>Brain Health:</strong> May protect against cognitive decline</li>
-        <li><strong>Heart Health:</strong> Improves endothelial function</li>
-      </ul>
-      
-      <p>Incorporate turmeric into your diet through golden milk, curries, teas, or supplements for maximum benefit.</p>
+      <p>Turmeric (Curcuma longa) has been revered in Ayurveda...</p>
     `,
     tags: ["Turmeric", "Anti-inflammatory", "Immunity", "Herbal Medicine"]
   }
@@ -243,107 +190,115 @@ const Blog = () => {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {posts.map((post, index) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.08 }}
-              >
-                <Card 
-                  className="h-full hover:shadow-elevated transition-shadow bg-background group cursor-pointer overflow-hidden"
-                  onClick={() => setSelectedPost(post)}
+            {posts.map((post, index) => {
+              // ✅ Get the actual image URLs using the helper
+              const imageUrl = getImage(post.image, blogImages);
+              const herbImageUrl = getImage(post.herbImage, herbImages);
+
+              return (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.08 }}
                 >
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden bg-secondary/20">
-                    <img 
-                      src={post.image} 
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        const img = e.currentTarget;
-                        img.onerror = null;
-                        img.src = '/images/blog-placeholder.jpg';
-                      }}
-                    />
-                    <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
-                      {post.category}
-                    </div>
-                    
-                    {/* Herb Image Overlay */}
-                    <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                      <img 
-                        src={post.herbImage} 
-                        alt={post.herbName}
-                        className="w-6 h-6 rounded-full object-cover border-2 border-primary"
-                        onError={(e) => {
-                          const img = e.currentTarget;
-                          img.onerror = null;
-                          img.src = '/images/herb-placeholder.jpg';
-                        }}
-                      />
-                      <span className="text-white text-xs font-medium">{post.herbName}</span>
-                    </div>
-                  </div>
-
-                  <CardContent className="p-5 flex flex-col h-full">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                      <Calendar className="h-3 w-3" />
-                      {post.date}
-                      <span className="mx-1">•</span>
-                      <Clock className="h-3 w-3" />
-                      {post.readTime}
-                    </div>
-                    
-                    <h3 className="font-heading text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
-                    
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-3">
-                      {post.excerpt}
-                    </p>
-
-                    <div className="flex flex-wrap gap-1 mt-3">
-                      {post.tags.slice(0, 3).map((tag) => (
-                        <span 
-                          key={tag} 
-                          className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded-full"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
-                      <div className="flex items-center gap-3">
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); handleLike(post.id); }}
-                          className={`text-sm flex items-center gap-1 transition-colors ${
-                            likedPosts.has(post.id) ? 'text-red-500' : 'text-muted-foreground hover:text-primary'
-                          }`}
-                        >
-                          <Heart className={`h-4 w-4 ${likedPosts.has(post.id) ? 'fill-red-500' : ''}`} />
-                          <span className="hidden sm:inline">Like</span>
-                        </button>
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); handleSave(post.id); }}
-                          className={`text-sm flex items-center gap-1 transition-colors ${
-                            savedPosts.has(post.id) ? 'text-primary' : 'text-muted-foreground hover:text-primary'
-                          }`}
-                        >
-                          <Bookmark className={`h-4 w-4 ${savedPosts.has(post.id) ? 'fill-primary' : ''}`} />
-                          <span className="hidden sm:inline">Save</span>
-                        </button>
+                  <Card 
+                    className="h-full hover:shadow-elevated transition-shadow bg-background group cursor-pointer overflow-hidden"
+                    onClick={() => setSelectedPost(post)}
+                  >
+                    {/* Image */}
+                    <div className="relative h-48 overflow-hidden bg-secondary/20">
+                      {imageUrl ? (
+                        <img 
+                          src={imageUrl} 
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-secondary/30">
+                          <span className="text-muted-foreground text-sm">No image</span>
+                        </div>
+                      )}
+                      <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+                        {post.category}
                       </div>
-                      <span className="text-sm font-medium text-primary flex items-center gap-1 hover:gap-2 transition-all">
-                        Read More <ArrowRight className="h-3 w-3" />
-                      </span>
+                      
+                      {/* Herb Image Overlay */}
+                      <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                        {herbImageUrl ? (
+                          <img 
+                            src={herbImageUrl} 
+                            alt={post.herbName}
+                            className="w-6 h-6 rounded-full object-cover border-2 border-primary"
+                          />
+                        ) : (
+                          <div className="w-6 h-6 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center">
+                            <span className="text-[8px] text-primary font-bold">H</span>
+                          </div>
+                        )}
+                        <span className="text-white text-xs font-medium">{post.herbName}</span>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+
+                    <CardContent className="p-5 flex flex-col h-full">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                        <Calendar className="h-3 w-3" />
+                        {post.date}
+                        <span className="mx-1">•</span>
+                        <Clock className="h-3 w-3" />
+                        {post.readTime}
+                      </div>
+                      
+                      <h3 className="font-heading text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                        {post.title}
+                      </h3>
+                      
+                      <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-3">
+                        {post.excerpt}
+                      </p>
+
+                      <div className="flex flex-wrap gap-1 mt-3">
+                        {post.tags.slice(0, 3).map((tag) => (
+                          <span 
+                            key={tag} 
+                            className="text-[10px] bg-primary/5 text-primary px-2 py-0.5 rounded-full"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
+                        <div className="flex items-center gap-3">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleLike(post.id); }}
+                            className={`text-sm flex items-center gap-1 transition-colors ${
+                              likedPosts.has(post.id) ? 'text-red-500' : 'text-muted-foreground hover:text-primary'
+                            }`}
+                          >
+                            <Heart className={`h-4 w-4 ${likedPosts.has(post.id) ? 'fill-red-500' : ''}`} />
+                            <span className="hidden sm:inline">Like</span>
+                          </button>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleSave(post.id); }}
+                            className={`text-sm flex items-center gap-1 transition-colors ${
+                              savedPosts.has(post.id) ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+                            }`}
+                          >
+                            <Bookmark className={`h-4 w-4 ${savedPosts.has(post.id) ? 'fill-primary' : ''}`} />
+                            <span className="hidden sm:inline">Save</span>
+                          </button>
+                        </div>
+                        <span className="text-sm font-medium text-primary flex items-center gap-1 hover:gap-2 transition-all">
+                          Read More <ArrowRight className="h-3 w-3" />
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -353,7 +308,9 @@ const Blog = () => {
         {selectedPost && (
           <BlogPopup 
             post={selectedPost} 
-            onClose={() => setSelectedPost(null)} 
+            onClose={() => setSelectedPost(null)}
+            blogImages={blogImages}
+            herbImages={herbImages}
           />
         )}
       </AnimatePresence>

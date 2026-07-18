@@ -33,7 +33,7 @@ const Consultation = () => {
 
   return (
     <>
-      <title>Book Consultation | Vaidyam Hospital Wellness Center</title>
+      <title>Book Consultation | Vaidyam Hospital & HealthCare Wellness Center</title>
 
       <section className="py-20">
         <div className="container mx-auto px-4">

@@ -1,14 +1,24 @@
 import { motion } from "framer-motion";
-import { X, Calendar, Clock, User, Tag, Share2, Bookmark, Heart, ArrowRight } from "lucide-react";
+import { X, Calendar, Clock, User, Share2, Bookmark, Heart, ArrowRight } from "lucide-react";
 import { useEffect } from "react";
 
-const BlogPopup = ({ post, onClose }) => {
+const BlogPopup = ({ post, onClose, blogImages, herbImages }) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, []);
+
+  // Helper to get image
+  const getImage = (filename, imageMap) => {
+    if (!filename) return null;
+    const key = Object.keys(imageMap).find(key => key.includes(filename));
+    return key ? imageMap[key].default : null;
+  };
+
+  const imageUrl = getImage(post.image, blogImages);
+  const herbImageUrl = getImage(post.herbImage, herbImages);
 
   return (
     <motion.div
@@ -36,16 +46,17 @@ const BlogPopup = ({ post, onClose }) => {
 
         {/* Hero Image */}
         <div className="relative h-64 md:h-80 overflow-hidden bg-secondary/20">
-          <img 
-            src={post.image} 
-            alt={post.title}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              const img = e.currentTarget;
-              img.onerror = null;
-              img.src = '/images/blog-placeholder.jpg';
-            }}
-          />
+          {imageUrl ? (
+            <img 
+              src={imageUrl} 
+              alt={post.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-secondary/30">
+              <span className="text-muted-foreground">No image</span>
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           
           {/* Category Badge */}
@@ -94,16 +105,17 @@ const BlogPopup = ({ post, onClose }) => {
           {/* Herb Information */}
           <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 mb-6">
             <h3 className="font-heading text-lg font-bold text-primary mb-2 flex items-center gap-2">
-              <img 
-                src={post.herbImage} 
-                alt={post.herbName}
-                className="w-8 h-8 rounded-full object-cover border-2 border-primary"
-                onError={(e) => {
-                  const img = e.currentTarget;
-                  img.onerror = null;
-                  img.src = '/images/herb-placeholder.jpg';
-                }}
-              />
+              {herbImageUrl ? (
+                <img 
+                  src={herbImageUrl} 
+                  alt={post.herbName}
+                  className="w-8 h-8 rounded-full object-cover border-2 border-primary"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center">
+                  <span className="text-xs text-primary font-bold">H</span>
+                </div>
+              )}
               Featured Herb: {post.herbName}
             </h3>
             <div className="flex flex-wrap gap-2">

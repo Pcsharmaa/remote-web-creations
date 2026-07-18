@@ -5,7 +5,7 @@ import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 const Contact = () => (
   <>
-    <title>Contact Us | Vaidyam Hospital Wellness Center</title>
+    <title>Contact Us | Vaidyam Hospital & HealthCare Wellness Center</title>
 
     <section className="py-20">
       <div className="container mx-auto px-4">
@@ -19,7 +19,7 @@ const Contact = () => (
 
             <div className="space-y-6">
               {[
-                { icon: MapPin, title: "Clinic Address", lines: ["Vaidyam Hospital Wellness Center", "Uttarakhand, India"] },
+                { icon: MapPin, title: "Clinic Address", lines: ["Vaidyam Hospital & HealthCare Wellness Center", "Uttarakhand, India"] },
                 { icon: Phone, title: "Phone", lines: ["+91-7818085195"] },
                 { icon: Mail, title: "Email", lines: ["info@sharmaayurvedic.com"] },
                 { icon: Clock, title: "Working Hours", lines: ["Mon – Sat: 9:00 AM – 7:00 PM", "Sunday: By Appointment Only"] },

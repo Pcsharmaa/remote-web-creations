@@ -12,7 +12,7 @@ const values = [
 
 const About = () => (
   <>
-    <title>About Dr. Harsh Vardhan Sharma| Vaidyam Hospital Wellness Center</title>
+    <title>About Dr. Harsh Vardhan Sharma| Vaidyam Hospital & HealthCare Wellness Center</title>
 
     {/* Doctor Profile */}
     <section className="py-20">
@@ -31,13 +31,13 @@ const About = () => (
             <p className="text-accent font-medium mt-1">BAMS — Bachelor of Ayurvedic Medicine and Surgery</p>
             <div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                Dr. Harsh Vardhan Sharma is a dedicated Ayurvedic physician practicing from the heart of Uttarakhand, India. With a degree in Bachelor of Ayurvedic Medicine and Surgery (BAMS), he combines classical Ayurvedic wisdom with a compassionate, patient-centered approach.
+                Dr.Harsh Vardhan Sharma is a dedicated Ayurvedic physician practicing from the heart of Uttarakhand, India. With a degree in Bachelor of Ayurvedic Medicine and Surgery (BAMS), he combines classical Ayurvedic wisdom with a compassionate, patient-centered approach.
               </p>
               <p>
                 His practice focuses on understanding each patient's unique constitution (Prakriti) and designing personalized treatment protocols that address the root cause of disease rather than merely suppressing symptoms.
               </p>
               <p>
-                Dr. Sharma specializes in Panchakarma detoxification therapies, herbal medicine formulations, and lifestyle modifications that empower patients to take charge of their own health and well-being.
+                Dr.Sharma specializes in Panchakarma detoxification therapies, herbal medicine formulations, and lifestyle modifications that empower patients to take charge of their own health and well-being.
               </p>
             </div>
           </motion.div>

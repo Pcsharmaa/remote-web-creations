@@ -23,7 +23,7 @@ const Navbar = () => {
         <Link to="/" className="flex items-center gap-2">
           <Leaf className="h-7 w-7 text-primary" />
           <span className="font-heading text-xl font-bold text-foreground">
-            Vaidyam Hospital
+            Vaidyam Hospital & HealthCare
           </span>
         </Link>
 

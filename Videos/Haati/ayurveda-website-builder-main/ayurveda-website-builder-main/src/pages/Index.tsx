@@ -44,7 +44,7 @@ const Index = () => {
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <img src={heroImage} alt="Ayurvedic herbs and healing oils" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-primary/70" />
+          <div className="absolute inset-0 bg-black/20" />
         </div>
         <div className="container relative z-10 mx-auto px-4 py-20">
           <motion.div
